@@ -1,7 +1,9 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
-import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as path from "path";
+import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
+import { Runtime } from "aws-cdk-lib/aws-lambda";
 
 export class RestApiAwsCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -26,25 +28,29 @@ export class RestApiAwsCdkStack extends cdk.Stack {
       },
     });
 
-    const createPostsFn = new lambda.Function(this, "createPostsFunction", {
-      runtime: lambda.Runtime.NODEJS_22_X,
-      code: lambda.Code.fromAsset("src/functions/posts"),
-      handler: "create-posts.main",
-      environment: {
-        STAGE: stage,
-        API_AWS_REGION: this.region,
-      },
-      memorySize: 512,
-      timeout: cdk.Duration.seconds(15),
-    });
+    const createPostsFn = new lambda.NodejsFunction(
+      this,
+      "createPostsFunction",
+      {
+        runtime: Runtime.NODEJS_22_X,
+        entry: path.resolve(
+          __dirname,
+          "../src/functions/posts/create-posts.ts"
+        ),
+        handler: "main",
+        environment: {
+          STAGE: stage,
+          API_AWS_REGION: this.region,
+        },
+        memorySize: 512,
+        timeout: cdk.Duration.seconds(15),
+      }
+    );
 
     const postsResource = api.root.addResource("posts");
     postsResource.addMethod(
       "POST",
-      new apigateway.LambdaIntegration(createPostsFn),
-      {
-        authorizationType: apigateway.AuthorizationType.NONE,
-      }
+      new apigateway.LambdaIntegration(createPostsFn)
     );
   }
 }

@@ -8,8 +8,9 @@ const posts: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent,
   context: Context
 ) => {
-  const method = event.httpMethod;
   try {
+    // TODO: Implement the logic to create a post
+
     return {
       statusCode: 200,
       headers: { "Content-Type": "text/json" },

@@ -12,7 +12,8 @@
     "synth:dev": "cdk synth --context stage=dev --profile dixon",
     "bootstrap:dev": "cdk bootstrap --context stage=dev --profile dixon",
     "deploy:dev": "cdk deploy --context stage=dev --profile dixon --require-approval never",
-    "destroy:dev": "cdk destroy --context stage=dev --profile dixon"
+    "destroy:dev": "cdk destroy --context stage=dev --profile dixon",
+    "start": "sam local start-api -t ./cdk.out/RestApiAwsCdkStack-dev.template.json"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.150",
